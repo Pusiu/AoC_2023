@@ -24,7 +24,6 @@ namespace AoC_2023
             if (!Directory.Exists(inputDirectory))
                 Directory.CreateDirectory(inputDirectory);
 
-            // Console.WriteLine(inputDirectory);
             var match = Regex.Match(GetType().ToString(), @"\d+$");
             int dayNumber = int.Parse(match.Value);
 
@@ -58,7 +57,6 @@ namespace AoC_2023
                         Headers = { { "cookie", cookie } }
                     });
                     var inp = await resp.Content.ReadAsStringAsync();
-                    //var resp = await client.GetStringAsync(url);
                     File.WriteAllText(inputDirectory + filename, inp);
                 }
                 catch (Exception e)
