@@ -9,7 +9,8 @@ namespace AoC_2023
         public override string Part1()
         {
             var map = input.Split("\n").Select(x => x.ToArray()).ToArray();
-            var nonSymbols = new char[] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.' };
+
+            bool isSymbol (char c) => !char.IsDigit(c) && c != '.';
 
             return map.Select((x, i) => new
             {
@@ -20,18 +21,17 @@ namespace AoC_2023
                 }),
                 YIndex = i
             })
-            .SelectMany(line => line.Matches.Where(match => match.Range.Any(xIndex => map switch {
-                var k when line.YIndex >= k.Length ||xIndex >= k[0].Length => false,
+            .SelectMany(line => line.Matches.Where(match => match.Range.Any(xIndex => map switch
+            {
+                var k when line.YIndex < k.Length && xIndex + 1 < k[line.YIndex].Length && isSymbol(k[line.YIndex][xIndex + 1]) => true,
+                var k when line.YIndex < k.Length && xIndex - 1 >= 0 && isSymbol(k[line.YIndex][xIndex - 1]) => true,
+                var k when line.YIndex + 1 < k.Length && isSymbol(k[line.YIndex + 1][xIndex]) => true,
+                var k when line.YIndex - 1 >= 0 && isSymbol(k[line.YIndex - 1][xIndex]) => true,
 
-                var k when line.YIndex < k.Length &&xIndex + 1 < k[line.YIndex].Length && !nonSymbols.Contains(k[line.YIndex][xIndex + 1]) => true,
-                var k when line.YIndex < k.Length &&xIndex - 1 >= 0 && !nonSymbols.Contains(k[line.YIndex][xIndex - 1]) => true,
-                var k when line.YIndex + 1 < k.Length && !nonSymbols.Contains(k[line.YIndex + 1][xIndex]) => true,
-                var k when line.YIndex - 1 >= 0 && !nonSymbols.Contains(k[line.YIndex - 1][xIndex]) => true,
-
-                var k when line.YIndex + 1 < k.Length &&xIndex + 1 < k[line.YIndex].Length && !nonSymbols.Contains(k[line.YIndex + 1][xIndex + 1]) => true, //lower right
-                var k when line.YIndex + 1 < k.Length &&xIndex - 1 >= 0 && !nonSymbols.Contains(k[line.YIndex + 1][xIndex - 1]) => true, //lower left
-                var k when line.YIndex - 1 >= 0 &&xIndex - 1 >= 0 && !nonSymbols.Contains(k[line.YIndex - 1][xIndex - 1]) => true, //upper left
-                var k when line.YIndex - 1 >= 0 &&xIndex + 1 < k[line.YIndex].Length && !nonSymbols.Contains(k[line.YIndex - 1][xIndex + 1]) => true, //upper right
+                var k when line.YIndex + 1 < k.Length && xIndex + 1 < k[line.YIndex].Length && isSymbol(k[line.YIndex + 1][xIndex + 1]) => true, //lower right
+                var k when line.YIndex + 1 < k.Length && xIndex - 1 >= 0 && isSymbol(k[line.YIndex + 1][xIndex - 1]) => true, //lower left
+                var k when line.YIndex - 1 >= 0 && xIndex - 1 >= 0 && isSymbol(k[line.YIndex - 1][xIndex - 1]) => true, //upper left
+                var k when line.YIndex - 1 >= 0 && xIndex + 1 < k[line.YIndex].Length && isSymbol(k[line.YIndex - 1][xIndex + 1]) => true, //upper right
                 _ => false
             })))
             .Sum(x => x.Value)
