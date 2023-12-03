@@ -56,8 +56,8 @@ namespace AoC_2023
                     {
                         Headers = { { "cookie", cookie } }
                     });
-                    var inp = await resp.Content.ReadAsStringAsync();
-                    File.WriteAllText(inputDirectory + filename, inp);
+                    input = await resp.Content.ReadAsStringAsync();
+                    File.WriteAllText(inputDirectory + filename, input);
                 }
                 catch (Exception e)
                 {
