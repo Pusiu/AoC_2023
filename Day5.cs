@@ -32,36 +32,27 @@ namespace AoC_2023
             var lowest = long.MaxValue;
             foreach (var seed in seeds)
             {
-                var val = Solve(seed, mappings);
-                if (val < lowest)
-                    lowest = val;
+                var mapperId=0;
+                var currentValue = seed;
+                do
+                {
+                    var mappedValue = currentValue;
+                    var k = mappings.Skip(mapperId).First().ranges.FirstOrDefault(x => currentValue >= x.sourceStart && currentValue <= x.sourceStart + x.length);
+                    if (k != null)
+                    {
+                        var diff = currentValue - k.sourceStart;
+                        mappedValue = k.destinationStart + diff;
+                    }                
+                    currentValue = mappedValue;
+                    mapperId++;
+                } while (mapperId < mappings.Count);
+                
+                
+                if (currentValue < lowest)
+                    lowest = currentValue;
             }
 
             return lowest.ToString();
-        }
-
-        long Solve(long seed, List<Mapping> mappings)
-        {
-            var sourceName = "seed";
-            var currentMapper = mappings.FirstOrDefault(x => x.sourceMapName == sourceName);
-            var currentValue = seed;
-            // Console.Write($"Seed {seed}, ");
-            do
-            {
-                var mappedValue = currentValue;
-                var k = currentMapper.ranges.FirstOrDefault(x => currentValue >= x.sourceStart && currentValue <= x.sourceStart + x.length);
-                if (k != null)
-                {
-                    var diff = currentValue - k.sourceStart;
-                    mappedValue = k.destinationStart + diff;
-                }
-                // Console.Write($"{currentMapper.destinationMapName} {mappedValue}, ");
-                currentMapper = mappings.FirstOrDefault(x => x.sourceMapName == currentMapper.destinationMapName);
-                currentValue = mappedValue;
-            } while (currentMapper != null);
-            // Console.WriteLine();
-
-            return currentValue;
         }
 
         List<Mapping> CreateMap(List<string> lines)
@@ -100,7 +91,47 @@ namespace AoC_2023
 
         public override string Part2()
         {
-            return base.Part2();
+            var split = input.Split("\n");
+            var seeds = Regex.Matches(split.First(), @"\d+").Select(x => long.Parse(x.Value)).ToList();
+
+            List<Mapping> mappings = CreateMap(split.Skip(1).ToList());
+            List<Range> seedRanges = new();
+            mappings.Add(new Mapping() { ranges = seedRanges });
+            for (int i = 0; i < seeds.Count; i += 2)
+            {
+                seedRanges.Add(new Range()
+                {
+                    destinationStart = seeds[i],
+                    length = seeds[i + 1]
+                });
+            }
+            long lowest = -1;
+            mappings.Reverse();
+            for (long i = 0; i < long.MaxValue; i++)
+            {
+                var mapperId = 0;
+                var currentValue = i;
+                do
+                {
+                    var mappedValue = currentValue;
+                    var k = mappings.Skip(mapperId).First().ranges.FirstOrDefault(x => currentValue >= x.destinationStart && currentValue <= x.destinationStart + x.length);
+                    if (k != null)
+                    {
+                        var diff = currentValue - k.destinationStart;
+                        mappedValue = k.sourceStart + diff;
+                    }
+                    currentValue = mappedValue;
+                    mapperId++;
+                } while (mapperId < mappings.Count);
+                var f = seedRanges.FirstOrDefault(x => x.destinationStart <= currentValue && currentValue < x.destinationStart + x.length);
+                if (f != null)
+                {
+                    lowest = i;
+                    break;
+                }
+            }
+
+            return lowest.ToString();
         }
     }
 }
