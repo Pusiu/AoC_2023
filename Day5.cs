@@ -10,8 +10,7 @@ namespace AoC_2023
 
         class Mapping
         {
-            public string sourceMapName;
-            public string destinationMapName;
+
             public List<Range> ranges = new List<Range>();
         }
 
@@ -64,11 +63,7 @@ namespace AoC_2023
                 var mapMatch = Regex.Match(line, @"(\w+)-to-(\w+)");
                 if (mapMatch.Success)
                 {
-                    lastMapping = new Mapping()
-                    {
-                        sourceMapName = mapMatch.Groups[1].Value,
-                        destinationMapName = mapMatch.Groups[2].Value
-                    };
+                    lastMapping = new Mapping();
                     mappings.Add(lastMapping);
                 }
                 else
