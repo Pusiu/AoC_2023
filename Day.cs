@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace AoC_2023
 {
@@ -12,9 +13,10 @@ namespace AoC_2023
         {
             if (string.IsNullOrEmpty(input))
                 input = await GetInput();
-
-            Console.WriteLine($"Part 1: {Part1()}\n");
-            Console.WriteLine($"Part 2: {Part2()}\n");
+            var stopwatch = Stopwatch.StartNew();
+            Console.WriteLine($"Part 1: {Part1()}\nin {stopwatch.Elapsed}");
+            stopwatch.Restart();
+            Console.WriteLine($"Part 2: {Part2()}\nin {stopwatch.Elapsed}");
         }
 
         public async Task<string> GetInput()
