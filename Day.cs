@@ -21,8 +21,8 @@ namespace AoC_2023
 
         public async Task<string> GetInput()
         {
-            var baseDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\"));
-            var inputDirectory = baseDirectory + @"\Inputs\";
+            var baseDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..//..//..//"));
+            var inputDirectory = baseDirectory + @"/Inputs/";
             if (!Directory.Exists(inputDirectory))
                 Directory.CreateDirectory(inputDirectory);
 
@@ -36,9 +36,9 @@ namespace AoC_2023
             {
                 input = File.ReadAllText(inputDirectory + filename);
             }
-            else
+            else if (!isTest)
             {
-                var cookiePath = baseDirectory + @"\cookie.txt";
+                var cookiePath = baseDirectory + @"/cookie.txt";
                 var cookie = "";
                 if (File.Exists(cookiePath))
                 {
@@ -65,6 +65,10 @@ namespace AoC_2023
                 {
                     Console.WriteLine($"Error getting input: {e.Message}");
                 }
+            }
+            else
+            {
+                throw new Exception("Test file does not exist");
             }
 
             return input.Replace("\r", "").Trim();
